@@ -1,6 +1,6 @@
-# Movie/Show Watchlist API
+# Movie & Show Watchlist API
 
-A RESTful API for managing a personal movie and show watchlist, built with Node.js, Express, and MongoDB Atlas. Track what you want to watch, what you're watching, and what you've finished — organized by genre and streaming platform.
+A RESTful API for managing a personal movie and show watchlist, built with Node.js, Express, and MongoDB Atlas. Track what you want to watch, what you're watching, and what you've finished organized by genre and streaming platform.
 
 > **CSE 341 — Project 2, Part 1 (CRUD Operations).** This is Part 1 of 2. Authentication/OAuth is added in Part 2.
 
@@ -185,27 +185,3 @@ curl -X POST https://cse341-wk3-project-ptd0.onrender.com/titles \
 4. In MongoDB Atlas, allow network access from anywhere (`0.0.0.0/0`) so Render can connect.
 
 The Swagger server URL updates automatically in production via Render's `RENDER_EXTERNAL_URL`.
-
-## Project Structure
-
-```
-├── controllers/     # Request logic + error handling
-│   ├── titlesController.js
-│   ├── genresController.js
-│   └── platformsController.js
-├── db/
-│   └── connect.js   # Mongoose connection
-├── models/          # Mongoose schemas + validation
-│   ├── Title.js
-│   ├── Genre.js
-│   └── Platform.js
-├── routes/          # Route definitions + Swagger annotations
-│   ├── titles.js
-│   ├── genres.js
-│   └── platforms.js
-├── server.js        # App entry point
-├── swagger.js       # Swagger config
-├── swagger.json     # OpenAPI spec file
-├── .env.example     # Environment variable template
-└── .gitignore
-```
