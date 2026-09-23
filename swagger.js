@@ -78,7 +78,7 @@ const options = {
         Error: {
           type: 'object',
           properties: {
-            error: { type: 'string', example: 'Title not found' },
+            error: { type: 'string', example: 'Resource not found' },
           },
         },
       },

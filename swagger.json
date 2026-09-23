@@ -133,7 +133,7 @@
         "properties": {
           "error": {
             "type": "string",
-            "example": "Title not found"
+            "example": "Resource not found"
           }
         }
       }
