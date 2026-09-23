@@ -1,6 +1,6 @@
 # Movie & Show Watchlist API
 
-A RESTful API for managing a personal movie and show watchlist, built with Node.js, Express, and MongoDB Atlas. Track what you want to watch, what you're watching, and what you've finished organized by genre and streaming platform.
+A RESTful API for managing a personal movie and show watchlist, built with Node.js, Express, and MongoDB Atlas. Track what you want to watch, what you're watching, and what you've finished, organized by genre.
 
 > **CSE 341 — Project 2, Part 1 (CRUD Operations).** This is Part 1 of 2. Authentication/OAuth is added in Part 2.
 
@@ -19,7 +19,7 @@ A RESTful API for managing a personal movie and show watchlist, built with Node.
 
 ## Features
 
-- Full CRUD (GET, POST, PUT, DELETE) across **three collections**
+- Full CRUD (GET, POST, PUT, DELETE) across **two collections**
 - Schema-level validation: required fields, enums, numeric ranges, and unique constraints
 - Consistent error handling on every route with proper HTTP status codes
 - Interactive Swagger UI documentation
@@ -47,15 +47,6 @@ A RESTful API for managing a personal movie and show watchlist, built with Node.
 | `name` | String | required, unique |
 | `description` | String | optional |
 
-### `platforms` (lookup collection)
-
-| Field | Type | Rules |
-| --- | --- | --- |
-| `name` | String | required, unique |
-| `description` | String | optional |
-| `baseUrl` | String | optional |
-| `subscriptionCost` | Number | ≥ 0, optional |
-
 ## API Endpoints
 
 All responses are JSON. Errors return `{ "error": "message" }`.
@@ -79,16 +70,6 @@ All responses are JSON. Errors return `{ "error": "message" }`.
 | POST | `/genres` | Create a genre | 201 |
 | PUT | `/genres/:id` | Update a genre | 200 |
 | DELETE | `/genres/:id` | Delete a genre | 200 |
-
-### Platforms
-
-| Method | Route | Description | Success |
-| --- | --- | --- | --- |
-| GET | `/platforms` | Get all platforms | 200 |
-| GET | `/platforms/:id` | Get one platform | 200 |
-| POST | `/platforms` | Create a platform | 201 |
-| PUT | `/platforms/:id` | Update a platform | 200 |
-| DELETE | `/platforms/:id` | Delete a platform | 200 |
 
 ### Status Codes
 

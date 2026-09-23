@@ -56,25 +56,6 @@ const options = {
             },
           },
         },
-        Platform: {
-          type: 'object',
-          required: ['name'],
-          properties: {
-            _id: { type: 'string', description: 'Auto-generated MongoDB id', readOnly: true },
-            name: { type: 'string', example: 'Netflix' },
-            description: {
-              type: 'string',
-              example: 'Subscription streaming service for movies and shows',
-            },
-            baseUrl: { type: 'string', example: 'https://www.netflix.com' },
-            subscriptionCost: {
-              type: 'number',
-              minimum: 0,
-              description: 'Monthly subscription cost',
-              example: 15.49,
-            },
-          },
-        },
         Error: {
           type: 'object',
           properties: {

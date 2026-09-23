@@ -8,7 +8,6 @@ const connectDB = require('./db/connect');
 const swaggerSpec = require('./swagger');
 const titlesRoutes = require('./routes/titles');
 const genresRoutes = require('./routes/genres');
-const platformsRoutes = require('./routes/platforms');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,7 +27,6 @@ app.get('/api-docs.json', (req, res) => {
 // --- Routes ---
 app.use('/titles', titlesRoutes);
 app.use('/genres', genresRoutes);
-app.use('/platforms', platformsRoutes);
 
 // Simple root route so hitting the base URL isn't a 404
 app.get('/', (req, res) => {
