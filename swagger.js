@@ -10,8 +10,14 @@ const options = {
         'A REST API for managing a personal movie and show watchlist. ' +
         'Part 1 of 2 (CRUD only — authentication comes in Part 2).',
     },
+    // Render injects RENDER_EXTERNAL_URL with the live public URL. When it's
+    // present (in production) Swagger's "Try it out" hits the deployed service;
+    // locally it falls back to localhost.
     servers: [
-      { url: 'http://localhost:3000', description: 'Local development server' },
+      ...(process.env.RENDER_EXTERNAL_URL
+        ? [{ url: process.env.RENDER_EXTERNAL_URL, description: 'Render production server' }]
+        : []),
+      { url: `http://localhost:${process.env.PORT || 3000}`, description: 'Local development server' },
     ],
     components: {
       schemas: {
