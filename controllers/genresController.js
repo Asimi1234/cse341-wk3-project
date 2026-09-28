@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const Genre = require('../models/Genre');
 
-/**
- * Maps a thrown error to an appropriate HTTP status code and message.
- */
 const handleError = (res, err) => {
   if (err instanceof mongoose.Error.CastError) {
     return res.status(400).json({ error: `Invalid ${err.path}: ${err.value}` });
@@ -12,7 +9,6 @@ const handleError = (res, err) => {
     const messages = Object.values(err.errors).map((e) => e.message);
     return res.status(400).json({ error: messages.join(', ') });
   }
-  // Duplicate key error from the unique index on `name`
   if (err.code === 11000) {
     return res.status(400).json({ error: 'A genre with that name already exists' });
   }
@@ -20,7 +16,6 @@ const handleError = (res, err) => {
   return res.status(500).json({ error: 'Internal server error' });
 };
 
-// GET /genres — get all genres
 const getAllGenres = async (req, res) => {
   try {
     const genres = await Genre.find();
@@ -30,7 +25,6 @@ const getAllGenres = async (req, res) => {
   }
 };
 
-// GET /genres/:id — get a single genre
 const getGenreById = async (req, res) => {
   try {
     const genre = await Genre.findById(req.params.id);
@@ -43,7 +37,6 @@ const getGenreById = async (req, res) => {
   }
 };
 
-// POST /genres — create a new genre
 const createGenre = async (req, res) => {
   try {
     const genre = await Genre.create(req.body);
@@ -53,12 +46,11 @@ const createGenre = async (req, res) => {
   }
 };
 
-// PUT /genres/:id — update an existing genre
 const updateGenre = async (req, res) => {
   try {
     const genre = await Genre.findByIdAndUpdate(req.params.id, req.body, {
-      new: true, // return the updated document
-      runValidators: true, // apply schema validation on update
+      new: true,
+      runValidators: true,
     });
     if (!genre) {
       return res.status(404).json({ error: 'Genre not found' });
@@ -69,7 +61,6 @@ const updateGenre = async (req, res) => {
   }
 };
 
-// DELETE /genres/:id — delete a genre
 const deleteGenre = async (req, res) => {
   try {
     const genre = await Genre.findByIdAndDelete(req.params.id);

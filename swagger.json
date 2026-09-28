@@ -3,7 +3,7 @@
   "info": {
     "title": "Movie/Show Watchlist API",
     "version": "1.0.0",
-    "description": "A REST API for managing a personal movie and show watchlist. Part 1 of 2 (CRUD only — authentication comes in Part 2)."
+    "description": "A REST API for managing a personal movie and show watchlist. Write operations (POST, PUT, DELETE) require a logged-in session via GitHub OAuth. Because auth is session/cookie based, protected routes must be tested in a browser after logging in at /auth/github — the Swagger \"Try it out\" button cannot hold the login session, so protected calls will return 401 there. Read operations (GET) are public."
   },
   "servers": [
     {
@@ -12,7 +12,41 @@
     }
   ],
   "components": {
+    "securitySchemes": {
+      "githubSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "connect.sid",
+        "description": "Session cookie set after logging in via GitHub OAuth at /auth/github. Established in the browser, not through Swagger UI."
+      }
+    },
     "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Auto-generated MongoDB id",
+            "readOnly": true
+          },
+          "githubId": {
+            "type": "string",
+            "example": "1234567"
+          },
+          "username": {
+            "type": "string",
+            "example": "octocat"
+          },
+          "email": {
+            "type": "string",
+            "example": "octocat@github.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "Title": {
         "type": "object",
         "required": [
@@ -146,6 +180,11 @@
         "tags": [
           "Titles"
         ],
+        "security": [
+          {
+            "githubSession": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -169,6 +208,16 @@
           },
           "400": {
             "description": "Validation error (missing/invalid fields)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": {
@@ -235,6 +284,11 @@
         "tags": [
           "Titles"
         ],
+        "security": [
+          {
+            "githubSession": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -277,6 +331,16 @@
               }
             }
           },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Title not found",
             "content": {
@@ -293,6 +357,11 @@
         "summary": "Delete a title",
         "tags": [
           "Titles"
+        ],
+        "security": [
+          {
+            "githubSession": []
+          }
         ],
         "parameters": [
           {
@@ -324,6 +393,16 @@
           },
           "400": {
             "description": "Invalid id format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": {
@@ -382,6 +461,11 @@
         "tags": [
           "Genres"
         ],
+        "security": [
+          {
+            "githubSession": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -405,6 +489,16 @@
           },
           "400": {
             "description": "Validation error or duplicate genre name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": {
@@ -471,6 +565,11 @@
         "tags": [
           "Genres"
         ],
+        "security": [
+          {
+            "githubSession": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -513,6 +612,16 @@
               }
             }
           },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Genre not found",
             "content": {
@@ -529,6 +638,11 @@
         "summary": "Delete a genre",
         "tags": [
           "Genres"
+        ],
+        "security": [
+          {
+            "githubSession": []
+          }
         ],
         "parameters": [
           {
@@ -568,12 +682,92 @@
               }
             }
           },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Genre not found",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/github": {
+      "get": {
+        "summary": "Start the GitHub OAuth login flow",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Redirects the browser to GitHub to authorize the app. Open this in a browser, not the Swagger \"Try it out\" button.",
+        "responses": {
+          "302": {
+            "description": "Redirect to GitHub for authorization"
+          }
+        }
+      }
+    },
+    "/auth/github/callback": {
+      "get": {
+        "summary": "GitHub OAuth callback",
+        "tags": [
+          "Auth"
+        ],
+        "description": "GitHub redirects here after authorization. Creates the session and redirects to the API docs on success.",
+        "responses": {
+          "302": {
+            "description": "Redirect to /api-docs on success or /auth/status on failure"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "summary": "Log out and destroy the session",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to /auth/status after logging out"
+          }
+        }
+      }
+    },
+    "/auth/status": {
+      "get": {
+        "summary": "Check current authentication state",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Whether a user is logged in, and their info if so",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "loggedIn": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
                 }
               }
             }
@@ -590,6 +784,10 @@
     {
       "name": "Genres",
       "description": "Lookup collection of genres referenced by titles"
+    },
+    {
+      "name": "Auth",
+      "description": "GitHub OAuth authentication"
     }
   ]
 }

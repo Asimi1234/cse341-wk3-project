@@ -7,6 +7,7 @@ const {
   updateTitle,
   deleteTitle,
 } = require('../controllers/titlesController');
+const ensureAuth = require('../middleware/ensureAuth');
 
 /**
  * @swagger
@@ -80,6 +81,8 @@ router.get('/:id', getTitleById);
  *   post:
  *     summary: Create a new title
  *     tags: [Titles]
+ *     security:
+ *       - githubSession: []
  *     requestBody:
  *       required: true
  *       content:
@@ -99,8 +102,14 @@ router.get('/:id', getTitleById);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.post('/', createTitle);
+router.post('/', ensureAuth, createTitle);
 
 /**
  * @swagger
@@ -108,6 +117,8 @@ router.post('/', createTitle);
  *   put:
  *     summary: Update an existing title
  *     tags: [Titles]
+ *     security:
+ *       - githubSession: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -140,8 +151,14 @@ router.post('/', createTitle);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.put('/:id', updateTitle);
+router.put('/:id', ensureAuth, updateTitle);
 
 /**
  * @swagger
@@ -149,6 +166,8 @@ router.put('/:id', updateTitle);
  *   delete:
  *     summary: Delete a title
  *     tags: [Titles]
+ *     security:
+ *       - githubSession: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -179,7 +198,13 @@ router.put('/:id', updateTitle);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.delete('/:id', deleteTitle);
+router.delete('/:id', ensureAuth, deleteTitle);
 
 module.exports = router;

@@ -7,6 +7,7 @@ const {
   updateGenre,
   deleteGenre,
 } = require('../controllers/genresController');
+const ensureAuth = require('../middleware/ensureAuth');
 
 /**
  * @swagger
@@ -80,6 +81,8 @@ router.get('/:id', getGenreById);
  *   post:
  *     summary: Create a new genre
  *     tags: [Genres]
+ *     security:
+ *       - githubSession: []
  *     requestBody:
  *       required: true
  *       content:
@@ -99,8 +102,14 @@ router.get('/:id', getGenreById);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.post('/', createGenre);
+router.post('/', ensureAuth, createGenre);
 
 /**
  * @swagger
@@ -108,6 +117,8 @@ router.post('/', createGenre);
  *   put:
  *     summary: Update an existing genre
  *     tags: [Genres]
+ *     security:
+ *       - githubSession: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -140,8 +151,14 @@ router.post('/', createGenre);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.put('/:id', updateGenre);
+router.put('/:id', ensureAuth, updateGenre);
 
 /**
  * @swagger
@@ -149,6 +166,8 @@ router.put('/:id', updateGenre);
  *   delete:
  *     summary: Delete a genre
  *     tags: [Genres]
+ *     security:
+ *       - githubSession: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -179,7 +198,13 @@ router.put('/:id', updateGenre);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
-router.delete('/:id', deleteGenre);
+router.delete('/:id', ensureAuth, deleteGenre);
 
 module.exports = router;

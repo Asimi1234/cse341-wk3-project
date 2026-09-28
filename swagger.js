@@ -8,11 +8,11 @@ const options = {
       version: '1.0.0',
       description:
         'A REST API for managing a personal movie and show watchlist. ' +
-        'Part 1 of 2 (CRUD only — authentication comes in Part 2).',
+        'Write operations (POST, PUT, DELETE) require a logged-in session via GitHub OAuth. ' +
+        'Because auth is session/cookie based, protected routes must be tested in a browser ' +
+        'after logging in at /auth/github — the Swagger "Try it out" button cannot hold the ' +
+        'login session, so protected calls will return 401 there. Read operations (GET) are public.',
     },
-    // Render injects RENDER_EXTERNAL_URL with the live public URL. When it's
-    // present (in production) Swagger's "Try it out" hits the deployed service;
-    // locally it falls back to localhost.
     servers: [
       ...(process.env.RENDER_EXTERNAL_URL
         ? [{ url: process.env.RENDER_EXTERNAL_URL, description: 'Render production server' }]
@@ -20,7 +20,27 @@ const options = {
       { url: `http://localhost:${process.env.PORT || 3000}`, description: 'Local development server' },
     ],
     components: {
+      securitySchemes: {
+        githubSession: {
+          type: 'apiKey',
+          in: 'cookie',
+          name: 'connect.sid',
+          description:
+            'Session cookie set after logging in via GitHub OAuth at /auth/github. ' +
+            'Established in the browser, not through Swagger UI.',
+        },
+      },
       schemas: {
+        User: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string', description: 'Auto-generated MongoDB id', readOnly: true },
+            githubId: { type: 'string', example: '1234567' },
+            username: { type: 'string', example: 'octocat' },
+            email: { type: 'string', example: 'octocat@github.com' },
+            createdAt: { type: 'string', format: 'date-time' },
+          },
+        },
         Title: {
           type: 'object',
           required: ['title', 'type', 'releaseYear', 'status', 'genreId'],
@@ -65,7 +85,6 @@ const options = {
       },
     },
   },
-  // Files to scan for @swagger JSDoc annotations
   apis: ['./routes/*.js'],
 };
 
